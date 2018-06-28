@@ -1,0 +1,23 @@
+.my-header-wraper {
+	height: 100px;
+	color: #fff;
+	background-color: #159957;
+	background-image: linear-gradient(120deg, #155799, #159957);
+}
+.my-header-wraper-img {
+	width: 80px;
+    float: right;
+    margin: 10px 20px;
+}
+.my-header-wraper-span {
+    font-size: 20px;
+    float: left;
+    margin: 35px 20px;
+ }
+ .my-header-wraper-span-right {
+ 	float: right;
+ 	font-size: 10px;
+ 	color: #ccc;
+ 	margin-top: 53px;
+ 	margin-right: 20px;
+ }

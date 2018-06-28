@@ -1,0 +1,9 @@
+.edit-wraper {
+  background-color: #fafafa; }
+  .edit-wraper .edit-left-step {
+    padding: 20px;
+    float: right; }
+  .edit-wraper .edit-right-step-content {
+    border-left: dotted 1px #ccc;
+    padding: 20px;
+    min-height: 500px; }

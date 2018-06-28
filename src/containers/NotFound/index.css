@@ -1,0 +1,15 @@
+.not-found-container {
+  background-image: linear-gradient(to bottom, rgba(48, 131, 198, 0.8), rgba(86, 163, 214, 0.9));
+  min-height: 100vh;
+  padding: 40px 30px 0;
+  text-align: center; }
+  .not-found-container img {
+    width: 100%;
+    display: block; }
+  .not-found-container p {
+    color: #fff; }
+  .not-found-container .btn-transparent {
+    margin-top: 40px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+    background-color: transparent; }

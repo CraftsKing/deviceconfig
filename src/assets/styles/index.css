@@ -1,0 +1,15 @@
+@charset "UTF-8";
+/* 本文件是用于定义系统公用样式 */
+/* 自定义样式请不要放在本文件中 */
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-weight: normal;
+}
+
+html{
+	font-family: sans-serif;
+    font-size: 20px;
+    background: #f5f5f5;
+}

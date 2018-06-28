@@ -1,0 +1,11 @@
+.home-wraper .home-button-wraper {
+  padding: 20px;
+  text-align: center; }
+  .home-wraper .home-button-wraper .home-button-new {
+    margin-right: 20px; }
+
+.home-wraper .home-recent-file-wraper {
+  padding: 20px; }
+  .home-wraper .home-recent-file-wraper .home-recent-file-lists {
+    position: absolute;
+    width: 100%; }
