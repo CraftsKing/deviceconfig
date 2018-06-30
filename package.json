@@ -4,7 +4,7 @@
   "description": "device config tool",
   "private": true,
   "author": "wangyufeng",
-  "homepage": "",
+  "homepage": "http://101.201.39.57/configtool",
   "dependencies": {
     "antd": "^3.2.3",
     "core-js": "^2.5.3",

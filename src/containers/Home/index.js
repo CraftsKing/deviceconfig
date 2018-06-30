@@ -1,62 +1,137 @@
 import * as React from 'react'
 import { Component } from 'react';
-// import { inject, observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 
 import { Upload, Button, Icon } from 'antd';
 import './index.css';
 
-// import typeof metadataType from '../../store/MetaData'
-// import typeof baseInfoType from '../../store/BaseInfo'
-
-// const Search = Input.Search;
-
-// @inject(allStores => ({
-//     MetaData: allStores.MetaData,
-//     BaseInfo: allStores.BaseInfo
-// }))
-// @observer
+@inject(allStores => ({
+    MetaData: allStores.MetaData,
+    BaseInfo: allStores.BaseInfo,
+    Attributes: allStores.Attributes,
+    Alarms: allStores.Alarms,
+    GroupCommands: allStores.GroupCommands,
+    Modifiers: allStores.Modifiers,
+    Constraints: allStores.Constraints,
+}))
+@observer
 class App extends Component {
+  state = {
+    savedTypeIdList: [],
+  }
 
   handleNewClick = () => {
     this.props.history.push('/edit');
   };
 
-  handleChange = (info) => {
-    let fileList = info.fileList;
-
-    // 1. Limit the number of uploaded files
-    //    Only to show two recent uploaded files, and old ones will be replaced by the new
-    fileList = fileList.slice(-2);
-
-    // 2. read from response and show file link
-    fileList = fileList.map((file) => {
-      if (file.response) {
-        // Component will show file.url as link
-        file.url = file.response.url;
+  handleChange = (info, fileList, e) => {
+    const self = this;
+    const file = info.file;
+    if (file && file.originFileObj) {
+      try {
+        const reader = new FileReader();
+        reader.onload = function() {
+          let tempStr = this.result + '';
+          // 如果不是以‘{’开始，则去掉
+          if (!tempStr.startsWith('{')) {
+            tempStr = tempStr.slice(tempStr.indexOf('{'), tempStr.length);
+          }
+          // 如果不是以‘}’结束，则去掉
+          if (!tempStr.endsWith('{')) {
+            tempStr = tempStr.slice(0, tempStr.lastIndexOf('}')+1);
+          }
+          self.execAddOrUpdate(JSON.parse(tempStr));
+          return true;
+        };
+        reader.readAsText(file.originFileObj);
+      } catch (error) {
+        console.log(error);
       }
-      return file;
-    });
+    }
+    return false;
+  }
 
-    // 3. filter successfully uploaded files according to response from server
-    fileList = fileList.filter((file) => {
-      if (file.response) {
-        return file.response.status === 'success';
+  execAddOrUpdate = (configObj) => {
+    const self = this;
+    if (window.__timeout) {
+      window.clearTimeout(window.__timeout);
+    }
+    window.__timeout = window.setTimeout(() => {
+      if (configObj && configObj.metadata) {
+        self.props.MetaData.setMetaData(configObj.metadata);
       }
-      return true;
-    });
-    console.log(fileList);
-  };
+      if (configObj && configObj.baseInfo) {
+        self.props.BaseInfo.setBaseInfo(configObj.baseInfo);
+      }
+
+      if (configObj && configObj.attributes) {
+        self.props.Attributes.removeAll();
+        for (let i = 0; i < configObj.attributes.length; i++) {
+          const item = configObj.attributes[i];
+          self.props.Attributes.addOrUpdateAttribute(item);
+        }
+      }
+      if (configObj && configObj.alarms) {
+        self.props.Alarms.removeAll();
+        for (let i = 0; i < configObj.alarms.length; i++) {
+          const item = configObj.alarms[i];
+          self.props.Alarms.addOrUpdateAlarm(item);
+        }
+      }
+      if (configObj && configObj.groupCommands) {
+        self.props.GroupCommands.removeAll();
+        for (let i = 0; i < configObj.groupCommands.length; i++) {
+          const item = configObj.groupCommands[i];
+          self.props.GroupCommands.addOrUpdateGroupCommand(item);
+        }
+      }
+      if (configObj && configObj.modifiers) {
+        self.props.Modifiers.removeAll();
+        for (let i = 0; i < configObj.modifiers.length; i++) {
+          const item = configObj.modifiers[i];
+          self.props.Modifiers.addOrUpdateModifier(item);
+        }
+      }
+      if (configObj && configObj.constraints) {
+        self.props.Constraints.removeAll();
+        for (let i = 0; i < configObj.constraints.length; i++) {
+          const item = configObj.constraints[i];
+          self.props.Constraints.addOrUpdateConstraint(item);
+        }
+      }
+      self.props.history.push('/edit');
+    }, 100);
+  }
+
+  fileNameOnClick = (fileName) => {
+    const storage = window.localStorage.getItem(fileName);
+    try {
+      const configObj = JSON.parse(storage);
+      this.execAddOrUpdate(configObj);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  componentDidMount() {
+    const savedTypeIdStr = window.localStorage.getItem('__saved_typeid_arr__');
+    const savedTypeIdList = savedTypeIdStr?savedTypeIdStr.split(','):[];
+    if (savedTypeIdList && savedTypeIdList.length > 0) {
+      this.setState({
+        savedTypeIdList: savedTypeIdList
+      });
+    }
+  }
 
   render() {
 
     const uploadProps = {
       accept: '.json',
       showUploadList: { showPreviewIcon: true, showRemoveIcon: false },
-      action: '//jsonplaceholder.typicode.com/posts/',
+      // action: '//jsonplaceholder.typicode.com/posts/',
       onChange: this.handleChange,
       multiple: false
     };
-    const recentFilesList = [1];
 
     return (
       <div className="home-wraper">
@@ -65,20 +140,20 @@ class App extends Component {
 
           <Upload {...uploadProps}>
             <Button>
-              <Icon type="upload" disabled/>导入
+              <Icon type="upload" />导入
             </Button>
           </Upload>
         </div>
         <div className="home-recent-file-wraper">
           <div className="home-recent-file-title">最近文件</div>
           {
-            recentFilesList.map((item, index) => (
-              <div key={index} className="home-recent-file-lists">
+            this.state.savedTypeIdList.map((item, index) => (
+              <div key={item} className="home-recent-file-lists">
                 <div className="ant-upload-list-item ant-upload-list-item-done">
                   <div className="ant-upload-list-item-info">
                     <span>
                       <i className="anticon anticon-paper-clip"></i>
-                      <span className="ant-upload-list-item-name" title="xxx.png">xxx.json</span>
+                      <span className="ant-upload-list-item-name" onClick={() => this.fileNameOnClick(item)}>{`${item}.json`}</span>
                     </span>
                   </div>
                 </div>

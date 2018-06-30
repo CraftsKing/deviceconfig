@@ -78,6 +78,11 @@ class Modifiers {
       this.removeModifierByName(name);
     }
   }
+        
+  @action removeAll(): void {
+    this.modifiers.clear();
+    this.id = 1;
+  }
 }
 
 export default new Modifiers();

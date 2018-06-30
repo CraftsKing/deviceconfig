@@ -55,7 +55,7 @@ export default class Modifiers extends Component<{Attributes: AttributesType, Mo
     title: '触发器',
     dataIndex: 'trigger',
     key: 'trigger',
-    render: (text) => (<pre>{`${JSON.stringify(text, null, '\t')}`}</pre>)
+    render: (text) => (<pre>{`${JSON.stringify(text, null, 2)}`}</pre>)
   }, {
     title: 'actions操作数组',
     dataIndex: 'actions',

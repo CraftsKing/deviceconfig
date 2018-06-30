@@ -22,11 +22,13 @@ class App extends Component {
 
     const { MetaData, BaseInfo, Attributes, Alarms, GroupCommands, Modifiers, Constraints } = this.props
 
-    const temp = JSON.stringify({metadata: MetaData, baseInfo: BaseInfo, attributes: Attributes.getAttributes(), alarms: Alarms.getAlarms(), groupCommand: GroupCommands.getGroupCommands(), modifiers: Modifiers.getModifiers(), constraints: Constraints.getConstraints()}, null, '\t')
+    const temp = JSON.stringify({metadata: MetaData, baseInfo: BaseInfo, attributes: Attributes.getAttributes(), alarms: Alarms.getAlarms(), groupCommands: GroupCommands.getGroupCommands(), modifiers: Modifiers.getModifiers(), constraints: Constraints.getConstraints()}, null, 2)
+    const sha256 = (window.CryptoJS && window.CryptoJS.SHA256) ? window.CryptoJS.SHA256(temp).toString() : '';
 
     return (
       <div className="preview-wraper">
         <pre>
+          {sha256}
           {temp}
         </pre>
         <Row justify="" >

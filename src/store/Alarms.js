@@ -65,6 +65,11 @@ class Alarms {
       this.removeAlarmByName(name);
     }
   }
+  
+  @action removeAll(): void {
+    this.alarms.clear();
+    this.id = 1;
+  }
 }
 
 export default new Alarms();

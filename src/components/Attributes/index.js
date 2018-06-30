@@ -45,7 +45,7 @@ export default class Attributes extends Component<{ Attributes: AttributesType, 
     title: '代码数组',
     dataIndex: 'code',
     key: 'code',
-    render: (text) => (<pre>{text?`${JSON.stringify(text, null, '\t')}`:''}</pre>)
+    render: (text) => (<pre>{text?`${JSON.stringify(text, null, 2)}`:''}</pre>)
   }, {
     title: '属性描述',
     dataIndex: 'desc',
@@ -59,17 +59,17 @@ export default class Attributes extends Component<{ Attributes: AttributesType, 
     title: '是否可读',
     dataIndex: 'readable',
     key: 'readable',
-    render: (text) => (<pre>{`${JSON.stringify(text, null, '\t')}`}</pre>)
+    render: (text) => (<pre>{`${JSON.stringify(text, null, 2)}`}</pre>)
   }, {
     title: '是否可写',
     dataIndex: 'writable',
     key: 'writable',
-    render: (text) => (<pre>{`${JSON.stringify(text, null, '\t')}`}</pre>)
+    render: (text) => (<pre>{`${JSON.stringify(text, null, 2)}`}</pre>)
   }, {
     title: '取值范围',
     dataIndex: 'valueRange',
     key: 'valueRange',
-    render: (text) => (<pre>{`${JSON.stringify(text, null, '\t')}`}</pre>)
+    render: (text) => (<pre>{`${JSON.stringify(text, null, 2)}`}</pre>)
   }, {
     title: '命令类型',
     dataIndex: 'operationType',
@@ -153,22 +153,27 @@ export default class Attributes extends Component<{ Attributes: AttributesType, 
       if (values && values.valueRange && values.valueRange.type !== 'LIST') {
         delete values.valueRange.dataList;
       }
-      // if (values && values.valueRange && values.valueRange.dataDate) {
-      //   if (!values.valueRange.dataDate.beginDate || !values.valueRange.dataDate.endDate) {
-      //     delete values.valueRange.dataDate;
-      //   }
-      // }
-      // if (values && values.valueRange && values.valueRange.dataList) {
-      //   for (var i = 0; i < values.valueRange.dataList.length; i++) {
-      //     const dataListItem = values.valueRange.dataList[i];
-      //     if (!dataListItem.data) {
-      //       values.valueRange.dataList.splice(i, 1);
-      //     }
-      //   }
-      //   if (values.valueRange.dataList.length === 0) {
-      //     delete values.valueRange.dataList;
-      //   }
-      // }
+      if (values && values.valueRange && values.valueRange.type === 'TIME') {
+        if (values.valueRange.dataTime && (values.valueRange.dataTime.minHour || values.valueRange.dataTime.minHour === '0')) {
+          values.valueRange.dataTime.minHour = Number(values.valueRange.dataTime.minHour);
+        }
+        if (values.valueRange.dataTime && (values.valueRange.dataTime.maxHour || values.valueRange.dataTime.maxHour === '0')) {
+          values.valueRange.dataTime.maxHour = Number(values.valueRange.dataTime.maxHour);
+        }
+        if (values.valueRange.dataTime && (values.valueRange.dataTime.minMinute || values.valueRange.dataTime.minMinute === '0')) {
+          values.valueRange.dataTime.minMinute = Number(values.valueRange.dataTime.minMinute);
+        }
+        if (values.valueRange.dataTime && (values.valueRange.dataTime.maxMinute || values.valueRange.dataTime.maxMinute === '0')) {
+          values.valueRange.dataTime.maxMinute = Number(values.valueRange.dataTime.maxMinute);
+        }
+        if (values.valueRange.dataTime && (values.valueRange.dataTime.minSecond || values.valueRange.dataTime.minSecond === '0')) {
+          values.valueRange.dataTime.minSecond = Number(values.valueRange.dataTime.minSecond);
+        }
+        if (values.valueRange.dataTime && (values.valueRange.dataTime.maxSecond || values.valueRange.dataTime.maxSecond === '0')) {
+          values.valueRange.dataTime.maxSecond = Number(values.valueRange.dataTime.maxSecond);
+        }
+      }
+      
       this.props.Attributes.addOrUpdateAttribute(values);
       form.resetFields();
       self.setState({ formVisiable: false, currentAttribute: null });

@@ -51,7 +51,7 @@ export default class Constraints extends Component<{Attributes: AttributesType, 
     title: '触发条件',
     dataIndex: 'pendingCondition',
     key: 'pendingCondition',
-    render: (text) => (<pre>{`${JSON.stringify(text, null, '\t')}`}</pre>)
+    render: (text) => (<pre>{`${JSON.stringify(text, null, 2)}`}</pre>)
   }, {
     title: 'commands操作数组',
     dataIndex: 'commands',

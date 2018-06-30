@@ -115,6 +115,11 @@ class Attributes {
       this.removeAttributeByName(name);
     }
   }
+
+  @action removeAll(): void {
+    this.attributes.clear();
+    this.id = 1;
+  }
 }
 
 export default new Attributes();

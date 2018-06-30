@@ -59,7 +59,7 @@ export default class GroupCommands extends Component<{Attributes: AttributesType
     title: '属性名数组',
     dataIndex: 'attrNameList',
     key: 'attrNameList',
-    render: (text) => (<pre>{`${JSON.stringify(text, null, '\t')}`}</pre>)
+    render: (text) => (<pre>{`${JSON.stringify(text, null, 2)}`}</pre>)
   }, {
     title: '操作',
     key: 'action',

@@ -73,6 +73,11 @@ class Constraints {
       this.removeConstraintByName(name);
     }
   }
+    
+  @action removeAll(): void {
+    this.constraints.clear();
+    this.id = 1;
+  }
 }
 
 export default new Constraints();

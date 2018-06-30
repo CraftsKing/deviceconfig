@@ -16,15 +16,15 @@ const formItemLayout: any = {
   },
 }
 
-type State = {
-  currentValueRangeType: string
-};
+// type State = {
+//   currentValueRangeType: string
+// };
 
-class CreateForm extends Component<{attribute: attributeType | null, form: any, visible: boolean, onCancel: any, onConfirm: any}, State> {
+class CreateForm extends Component<{attribute: attributeType | null, form: any, visible: boolean, onCancel: any, onConfirm: any}> {
   
-  state = {
-    currentValueRangeType: (this.props.attribute&&this.props.attribute.valueRange)?this.props.attribute.valueRange.type:null
-  }
+  // state = {
+  //   currentValueRangeType: (this.props.attribute&&this.props.attribute.valueRange)?this.props.attribute.valueRange.type:null
+  // }
 
   removeCode = (index: number) => {
     const { form } = this.props;
@@ -115,12 +115,13 @@ class CreateForm extends Component<{attribute: attributeType | null, form: any, 
       desc: desc,
       code: code,
       _code: _code,
+      _currentValueRangeType: value,
       defaultValue: defaultValue,
       writable: writable,
       readable: readable,
       operationType: operationType
     });
-    this.setState({currentValueRangeType: value});
+    // this.setState({currentValueRangeType: value});
   }
 
   dataListOnChange = () => {
@@ -155,12 +156,16 @@ class CreateForm extends Component<{attribute: attributeType | null, form: any, 
     const { getFieldDecorator, getFieldValue } = form
 
     getFieldDecorator('id', { initialValue: (attribute&&attribute.id)?attribute.id:null });
+    getFieldDecorator('_currentValueRangeType', { initialValue: (attribute&&attribute.valueRange)?attribute.valueRange.type:'NONE' });
+    const currentValueRangeType = getFieldValue('_currentValueRangeType');
+   
+
     let valueRangeDataList: any = [];
-    if (this.state.currentValueRangeType === 'LIST') {
-      getFieldDecorator('valueRange.dataList', { initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataList)?attribute.valueRange.dataList.slice():[{data: '',code: '', desc: ''}] });
+    if (currentValueRangeType === 'LIST') {
+      getFieldDecorator('valueRange.dataList', { initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataList&&attribute.valueRange.dataList.slice().length>0)?attribute.valueRange.dataList.slice():[{data: '',code: '', desc: ''}] });
       valueRangeDataList = getFieldValue('valueRange.dataList');
     }
-    if (this.state.currentValueRangeType === 'DATE') {
+    if (currentValueRangeType === 'DATE') {
       getFieldDecorator('valueRange.dataDate.beginDate', { initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataDate)?attribute.valueRange.dataDate.beginDate:null });
       getFieldDecorator('valueRange.dataDate.endDate', { initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataDate)?attribute.valueRange.dataDate.endDate:null });
     }
@@ -254,9 +259,8 @@ class CreateForm extends Component<{attribute: attributeType | null, form: any, 
           </Form.Item>
           <Form.Item label="取值范围" labelCol={{ span: 4 }} wrapperCol={{ span: 18 }}>
             {getFieldDecorator('valueRange.type', {
-              initialValue: (attribute&&attribute.valueRange)?attribute.valueRange.type:'NONE',
+              initialValue: currentValueRangeType,
               rules: [{ required: true }],
-              valuePropName: 'checked'
             })(
               <Radio.Group onChange={(e) => this.valueRangeTypeOnChange(e.target.value)}>
                 <Radio.Button value="NONE">NONE</Radio.Button>
@@ -268,8 +272,8 @@ class CreateForm extends Component<{attribute: attributeType | null, form: any, 
             )}
           </Form.Item>
           {
-            this.state.currentValueRangeType === 'LIST'?(
-              getFieldValue('valueRange.dataList').map((item, ind) => (
+            getFieldValue('valueRange.type') === 'LIST'?(
+              valueRangeDataList.map((item, ind) => (
                 <Row type="flex" justify="center" key={item.data}>
                   <Col span={7} >
                     <Form.Item>
@@ -308,7 +312,7 @@ class CreateForm extends Component<{attribute: attributeType | null, form: any, 
             ):null
           }
           {
-            this.state.currentValueRangeType === 'STEP'?(
+            getFieldValue('valueRange.type') === 'STEP'?(
               <div>
                 <Form.Item label=" " colon={false} {...formItemLayout}>
                   {getFieldDecorator('valueRange.dataStep.dataType', {
@@ -372,69 +376,98 @@ class CreateForm extends Component<{attribute: attributeType | null, form: any, 
             ):null
           }
           {
-            this.state.currentValueRangeType === 'TIME'?(
+            getFieldValue('valueRange.type') === 'TIME'?(
               <div>
                 <Form.Item label=" " colon={false} {...formItemLayout}>
                   {getFieldDecorator('valueRange.dataTime.format', {
-                    initialValue: 'HH:mm:ss',
+                    initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime)?attribute.valueRange.dataTime.format:'',
                     rules: [{ required: true }],
                   })(
-                    <Input addonBefore="时间格式" disabled placeholder="format"/>
+                    <Select placeholder="时间格式">
+                      <Select.Option value="HH:mm:ss">HH:mm:ss</Select.Option>
+                      <Select.Option value="HH:mm">HH:mm</Select.Option>
+                      <Select.Option value="mm">mm</Select.Option>
+                      <Select.Option value="ss">ss</Select.Option>
+                    </Select>
                   )}
                 </Form.Item>
-                <Form.Item label=" " colon={false} {...formItemLayout}>
-                  {getFieldDecorator('valueRange.dataTime.minHour', {
-                    initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime)?Number(attribute.valueRange.dataTime.minHour):'',
-                    rules: [{ required: true, whitespace: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
-                  })(
-                    <Input addonBefore="最小小时" placeholder="大于等于0"/>
-                  )}
-                </Form.Item>
-                <Form.Item label=" " colon={false} {...formItemLayout}>
-                  {getFieldDecorator('valueRange.dataTime.maxHour', {
-                    initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime)?Number(attribute.valueRange.dataTime.maxHour):'',
-                    rules: [{ required: true, whitespace: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
-                  })(
-                    <Input addonBefore="最大小时" placeholder="小于等于23"/>
-                  )}
-                </Form.Item>
-                <Form.Item label=" " colon={false} {...formItemLayout}>
-                  {getFieldDecorator('valueRange.dataTime.minMinute', {
-                    initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime)?Number(attribute.valueRange.dataTime.minMinute):'',
-                    rules: [{ required: true, whitespace: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
-                  })(
-                    <Input addonBefore="最小分钟" placeholder="大于等于0"/>
-                  )}
-                </Form.Item>
-                <Form.Item label=" " colon={false} {...formItemLayout}>
-                  {getFieldDecorator('valueRange.dataTime.maxMinute', {
-                    initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime)?Number(attribute.valueRange.dataTime.maxMinute):'',
-                    rules: [{ required: true, whitespace: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
-                  })(
-                    <Input addonBefore="最大分钟" placeholder="小于等于59"/>
-                  )}
-                </Form.Item>
-                <Form.Item label=" " colon={false} {...formItemLayout}>
-                  {getFieldDecorator('valueRange.dataTime.minSecond', {
-                    initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime)?Number(attribute.valueRange.dataTime.minSecond):'',
-                    rules: [{ required: true, whitespace: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
-                  })(
-                    <Input addonBefore="最小秒" placeholder="大于等于0"/>
-                  )}
-                </Form.Item>
-                <Form.Item label=" " colon={false} {...formItemLayout}>
-                  {getFieldDecorator('valueRange.dataTime.maxSecond', {
-                    initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime)?Number(attribute.valueRange.dataTime.maxSecond):'',
-                    rules: [{ required: true, whitespace: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
-                  })(
-                    <Input addonBefore="最大秒" placeholder="小于等于59"/>
-                  )}
-                </Form.Item>
+                {
+                  getFieldValue('valueRange.dataTime.format').indexOf('HH') !== -1
+                  ? (
+                      <div>
+                        <Form.Item label=" " colon={false} {...formItemLayout}>
+                          {getFieldDecorator('valueRange.dataTime.minHour', {
+                            initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime&&attribute.valueRange.dataTime.minHour)?Number(attribute.valueRange.dataTime.minHour):'',
+                            rules: [{ required: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
+                          })(
+                            <Input addonBefore="最小小时" placeholder="大于等于0"/>
+                          )}
+                        </Form.Item>
+                        <Form.Item label=" " colon={false} {...formItemLayout}>
+                          {getFieldDecorator('valueRange.dataTime.maxHour', {
+                            initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime&&attribute.valueRange.dataTime.maxHour)?Number(attribute.valueRange.dataTime.maxHour):'',
+                            rules: [{ required: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
+                          })(
+                            <Input addonBefore="最大小时" placeholder="小于等于23"/>
+                          )}
+                        </Form.Item>
+                      </div>
+                    )
+                  : null
+                }
+                {
+                  getFieldValue('valueRange.dataTime.format').indexOf('mm') !== -1
+                  ? (
+                      <div>
+                        <Form.Item label=" " colon={false} {...formItemLayout}>
+                          {getFieldDecorator('valueRange.dataTime.minMinute', {
+                            initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime&&attribute.valueRange.dataTime.minMinute)?Number(attribute.valueRange.dataTime.minMinute):'',
+                            rules: [{ required: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
+                          })(
+                            <Input addonBefore="最小分钟" placeholder="大于等于0"/>
+                          )}
+                        </Form.Item>
+                        <Form.Item label=" " colon={false} {...formItemLayout}>
+                          {getFieldDecorator('valueRange.dataTime.maxMinute', {
+                            initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime&&attribute.valueRange.dataTime.maxMinute)?Number(attribute.valueRange.dataTime.maxMinute):'',
+                            rules: [{ required: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
+                          })(
+                            <Input addonBefore="最大分钟" placeholder="小于等于59"/>
+                          )}
+                        </Form.Item>
+                      </div>
+                    )
+                  : null
+                }
+                {
+                  getFieldValue('valueRange.dataTime.format').indexOf('ss') !== -1
+                  ? (
+                      <div>
+                        <Form.Item label=" " colon={false} {...formItemLayout}>
+                          {getFieldDecorator('valueRange.dataTime.minSecond', {
+                            initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime&&attribute.valueRange.dataTime.minSecond)?Number(attribute.valueRange.dataTime.minSecond):'',
+                            rules: [{ required: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
+                          })(
+                            <Input addonBefore="最小秒" placeholder="大于等于0"/>
+                          )}
+                        </Form.Item>
+                        <Form.Item label=" " colon={false} {...formItemLayout}>
+                          {getFieldDecorator('valueRange.dataTime.maxSecond', {
+                            initialValue: (attribute&&attribute.valueRange&&attribute.valueRange.dataTime&&attribute.valueRange.dataTime.maxSecond)?Number(attribute.valueRange.dataTime.maxSecond):'',
+                            rules: [{ required: true, message: '整数且不允许为空!' }, {validator: this.validatorNumber}],
+                          })(
+                            <Input addonBefore="最大秒" placeholder="小于等于59"/>
+                          )}
+                        </Form.Item>
+                      </div>
+                    )
+                  : null
+                }
               </div>
             ):null
           }
           {
-            this.state.currentValueRangeType === 'DATE'?(
+            getFieldValue('valueRange.type') === 'DATE'?(
               <div>
                 <Form.Item label=" " colon={false} {...formItemLayout}>
                   {getFieldDecorator('valueRange.dataDate.format', {

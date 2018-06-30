@@ -65,6 +65,11 @@ class GroupCommands {
       this.removeGroupCommandByName(name);
     }
   }
+      
+  @action removeAll(): void {
+    this.groupCommands.clear();
+    this.id = 1;
+  }
 }
 
 export default new GroupCommands();
