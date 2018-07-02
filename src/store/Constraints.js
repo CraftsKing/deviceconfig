@@ -75,6 +75,7 @@ class Constraints {
   }
     
   @action removeAll(): void {
+    // $FlowFixMe
     this.constraints.clear();
     this.id = 1;
   }

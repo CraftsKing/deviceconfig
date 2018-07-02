@@ -67,6 +67,7 @@ class Alarms {
   }
   
   @action removeAll(): void {
+    // $FlowFixMe
     this.alarms.clear();
     this.id = 1;
   }

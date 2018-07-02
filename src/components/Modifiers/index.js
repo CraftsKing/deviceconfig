@@ -18,7 +18,8 @@ type State = {
   selectModifiers: Array<modifierType>,
   formVisiable: boolean,
   actionsformVisiable: boolean,
-  currentModifier: modifierType | null
+  currentModifier: modifierType | null,
+  currentModifierCopy: modifierType | null
 };
 
 type ModifiersType = {
@@ -93,10 +94,10 @@ export default class Modifiers extends Component<{Attributes: AttributesType, Mo
     this.setState({ formVisiable: true, currentModifier: item, currentModifierCopy: item });
   }
 
-  handleUpdateActions = (item) => {
+  handleUpdateActions = (item: modifierType) => {
     this.setState({ actionsformVisiable: true, currentModifier: item, currentModifierCopy: item });
   }
-  handleAddActions = (item) => {
+  handleAddActions = (item: modifierType) => {
     this.setState({ actionsformVisiable: true, currentModifier: null, currentModifierCopy: item });
   }
 
@@ -141,7 +142,7 @@ export default class Modifiers extends Component<{Attributes: AttributesType, Mo
         return;
       }
       console.log('Received values of form: ', values);
-      const conditionsObj = {
+      const conditionsObj: any = {
         priority: Number(values.priority),
         trigger: {
           operator: values.trigger.operator,
@@ -189,7 +190,7 @@ export default class Modifiers extends Component<{Attributes: AttributesType, Mo
       for (let i = 0; i < namesArr.length; i++) {
         const nameItem = namesArr[i];
         if (nameItem && nameItem !== 'undefined' && nameItem !== '请选择' && actions[nameItem] && actions[nameItem].name && actions[nameItem].rewriteFields) {
-          const tempAction = {
+          const tempAction: any = {
             name: actions[nameItem].name,
             rewriteFields: replace(join(actions[nameItem].rewriteFields), ',')
           };

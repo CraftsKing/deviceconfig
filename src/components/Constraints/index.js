@@ -18,7 +18,8 @@ type State = {
   selectConstraints: Array<constraintType>,
   formVisiable: boolean,
   actionsformVisiable: boolean,
-  currentConstraint: constraintType | null
+  currentConstraint: constraintType | null,
+  currentConstraintCopy: constraintType | null
 };
 
 type ConstraintsType = {
@@ -38,7 +39,7 @@ type AttributesType = {
     Other: allStores.Other
 }))
 @observer
-export default class Constraints extends Component<{Attributes: AttributesType, Constraints: ConstraintsType, Other: otherType}, State> {
+export default class Constraints extends Component<{Attributes: AttributesType, Constraints: ConstraintsType, Other: otherType, history: any}, State> {
   state: any = {
     selectConstraints: [],
     formVisiable: false,

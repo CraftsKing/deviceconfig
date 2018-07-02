@@ -80,6 +80,7 @@ class Modifiers {
   }
         
   @action removeAll(): void {
+    // $FlowFixMe
     this.modifiers.clear();
     this.id = 1;
   }

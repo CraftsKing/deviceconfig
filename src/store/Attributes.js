@@ -117,6 +117,7 @@ class Attributes {
   }
 
   @action removeAll(): void {
+    // $FlowFixMe
     this.attributes.clear();
     this.id = 1;
   }

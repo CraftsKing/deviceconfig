@@ -67,6 +67,7 @@ class GroupCommands {
   }
       
   @action removeAll(): void {
+    // $FlowFixMe
     this.groupCommands.clear();
     this.id = 1;
   }

@@ -386,8 +386,8 @@ class CreateForm extends Component<{attribute: attributeType | null, form: any, 
                     <Select placeholder="时间格式">
                       <Select.Option value="HH:mm:ss">HH:mm:ss</Select.Option>
                       <Select.Option value="HH:mm">HH:mm</Select.Option>
+                      <Select.Option value="HH">HH</Select.Option>
                       <Select.Option value="mm">mm</Select.Option>
-                      <Select.Option value="ss">ss</Select.Option>
                     </Select>
                   )}
                 </Form.Item>
